@@ -1,0 +1,94 @@
+// constructor(props) {
+    //     super(props);
+    //     this.state = {
+    //         tasks: ['task 1', 'task 2'],
+    //         tasksComplete: [],
+    //         showAddForm: false,
+    //         showCompleteTasks: false,
+    //     };
+    // }
+    // setStatus = () => {
+    //     this.setState({
+    //         showAddForm: true,
+    //     });
+    // };
+    // setStatusComplete = () => {
+    //     this.setState({
+    //         showCompleteTasks: true,
+    //     });
+    // };
+    // closeForm = () => {
+    //     this.setState({
+    //         showAddForm: false,
+    //         showEditForm: false,
+    //     });
+    // };
+    // closeComplete = () => {
+    //     this.setState({
+    //         showCompleteTasks: false,
+    //     });
+    // };
+    // addTask = (name) => {
+    //     this.state.tasks.push(name);
+    //     this.forceUpdate();
+    // };
+    // removeTask = (indexx) => {
+    //     this.state.tasksComplete.push(this.state.tasks[indexx]);
+    //     this.state.tasks = this.state.tasks.filter(function (val, index) {
+    //         return index !== indexx;
+    //     });
+
+    //     this.forceUpdate();
+    // };
+    // render() {
+    //     if (this.state.showAddForm === true) {
+    //         return <AddTask addTask={this.addTask} closeForm={this.closeForm} />;
+    //     }
+    //     if (this.state.showCompleteTasks === true) {
+    //         return (
+    //             <div className="container">
+    //                 <h2>CompletedTask</h2>
+
+    //                 <ul>
+    //                     {this.state.tasksComplete.map(
+    //                         ((name, index) => <CompletedTask name={name} key={index} />).bind(this),
+    //                     )}
+    //                 </ul>
+    //                 <button type="button" onClick={this.closeComplete}>
+    //                     Back
+    //                 </button>
+    //             </div>
+    //         );
+    //     } else {
+    //         return (
+    //             <div className="container">
+    //                 <h2>TodoList</h2>
+    //                 <button
+    //                     type="button"
+    //                     className="btn btn-outline-primary"
+    //                     style={{ marginRight: 5 + 'px' }}
+    //                     onClick={this.setStatus}
+    //                 >
+    //                     AddTask
+    //                 </button>
+    //                 <button type="button" className="btn btn-outline-primary" onClick={this.setStatusComplete}>
+    //                     Completed
+    //                 </button>
+    //                 <h3>List of task</h3>
+    //                 <ul>
+    //                     {this.state.tasks.map(
+    //                         ((name, index) => (
+    //                             <TodoList
+    //                                 name={name}
+    //                                 key={index}
+    //                                 index={index}
+    //                                 removeTask={this.removeTask}
+    //                                 closeForm={this.closeForm}
+    //                             />
+    //                         )).bind(this),
+    //                     )}
+    //                 </ul>
+    //             </div>
+    //         );
+    //     }
+    // }

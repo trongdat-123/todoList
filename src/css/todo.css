@@ -1,0 +1,21 @@
+.task {
+    margin-right: 5px;
+}
+ul {
+    padding: 0;
+}
+ul li {
+    display: flex;
+    justify-content: space-between;
+    list-style: none;
+    width: 150px;
+    margin-bottom: 5px;
+    padding-left: 5px;
+    border: 1px solid;
+    border-color: blue;
+    border-radius: 10px;
+}
+ul li .but {
+    border: none;
+    background: none;
+}
