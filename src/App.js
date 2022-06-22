@@ -1,6 +1,7 @@
 import logo from './logo.svg';
 import './css/todo1.css';
 import { Component } from 'react';
+import API from './api/api';
 import Header from './components1/Header';
 import Footer from './components1/Footer';
 import TodoList from './components1/TodoList';
@@ -26,12 +27,21 @@ class App extends Component {
         isCheckedAll: false,
         status: 'All',
     };
+    componentDidMount() {
+        const { listTodos } = this.state;
 
+        API.get('')
+            .then((res) => {
+                const listTodos = res.data;
+                this.setState({ listTodos });
+                console.log(listTodos);
+            })
+            .catch((error) => console.log(error));
+    }
     addTodos = (todo = {}) => {
         this.setState((prevTodos) => ({
             listTodos: [...prevTodos.listTodos, todo],
         }));
-        console.log(todo.id);
     };
     removeTodo = (id = '') => {
         this.setState((prevTodos) => ({
@@ -80,6 +90,10 @@ class App extends Component {
         this.setState({
             listTodos: updatedListTodos,
         });
+        listTodos.map((item) => {
+            item.isCompleted = false;
+            API.put(`/${item.id}`, { ...item }).then((res) => {});
+        });
     };
     removeAll = () => {
         this.setState({
@@ -98,6 +112,7 @@ class App extends Component {
                     changeStatus={this.changeStatus}
                 />
                 <Footer
+                    listTodos={listTodos}
                     active={status}
                     numOfTodoLeft={filterTodosLeft(listTodos).length}
                     numOfTodoCompleted={filterByStatus(listTodos, status).length}

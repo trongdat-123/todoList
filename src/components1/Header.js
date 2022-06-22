@@ -1,11 +1,18 @@
 import { memo, useState } from 'react';
+import API from '../api/api';
 const Header = memo((props) => {
     const [text, setText] = useState('');
     const { addTodo, listTodos, checkAll } = props;
     const onAddTodo = (e) => {
         if (e.key === 'Enter' && text) {
-            addTodo({ id: new Date().valueOf(), text, isCompleted: false });
-            setText('');
+            e.preventDefault();
+            API.post('', { text })
+                .then((res) => {
+                    const todo = { id: res.data.id, text: res.data.text, isCompleted: res.data.isCompleted };
+                    addTodo(todo);
+                    setText('');
+                })
+                .catch((error) => console.log(error));
         }
     };
     return (

@@ -2,6 +2,6 @@
     "editor.formatOnSave": true,
     "editor.defaultFormatter": "esbenp.prettier-vscode",
     "[javascript]": {
-        "editor.defaultFormatter": "lonefy.vscode-JS-CSS-HTML-formatter"
+        "editor.defaultFormatter": "esbenp.prettier-vscode"
     }
 }
