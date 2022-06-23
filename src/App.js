@@ -2,6 +2,8 @@ import { Component } from 'react';
 import { Routes, Route, Outlet } from 'react-router-dom';
 import Main from './Main';
 import TodoCard from './components1/TodoCard';
+import 'antd/dist/antd.css';
+
 function App() {
     return (
         <Routes>

@@ -4,7 +4,7 @@ import { useNavigate } from 'react-router-dom';
 import API from '../api/api';
 import { Spin } from 'antd';
 const TodoCard = () => {
-    let history = useNavigate();
+    let navigate = useNavigate();
 
     const { id } = useParams();
     const [text, setText] = useState('');
@@ -20,7 +20,7 @@ const TodoCard = () => {
     const updateTodos = () => {
         if (text) {
             API.put(`${id}`, { text }).then(() => {
-                history('/');
+                navigate('/');
             });
         }
     };
@@ -40,7 +40,11 @@ const TodoCard = () => {
                             setText(e.target.value);
                         }}
                     />
-                    <p>{todoDetails.isCompleted ? 'Todo is completed' : 'Todo is active'}</p>
+                    {todoDetails.isCompleted ? (
+                        <p className="completed">Todo is completed</p>
+                    ) : (
+                        <p className="active">Todo is not completed</p>
+                    )}
                     <div className="handleUpdate">
                         <button className="update" onClick={updateTodos} style={{ marginRight: 10 + 'px' }}>
                             Update
@@ -51,7 +55,9 @@ const TodoCard = () => {
                     </div>
                 </div>
             ) : (
-                <Spin />
+                <div style={{ display: 'flex', justifyContent: 'center' }}>
+                    <Spin tip="Loading..." />
+                </div>
             )}
         </>
     );
