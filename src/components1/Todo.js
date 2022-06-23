@@ -1,6 +1,8 @@
 import { memo, useState } from 'react';
 import API from '../api/api';
+import { useNavigate } from 'react-router-dom';
 const Todo = memo((props) => {
+    let history = useNavigate();
     const { todo, removeTodo, changeStatus } = props;
     const onChangeStatus = (e) => {
         e.preventDefault();
@@ -21,7 +23,7 @@ const Todo = memo((props) => {
                     <i class="far fa-circle" aria-hidden="true" style={{ color: 'rgb(221 216 216)' }}></i>
                 )}
             </button>
-            <span>{todo.text}</span>
+            <span onClick={() => history(`/todo/${todo.id}`)}>{todo.text}</span>
 
             <button className="but_remove" onClick={onRemoveTodo}>
                 <i class="fa fa-times-circle" aria-hidden="true" style={{ color: 'red' }}></i>

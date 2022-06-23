@@ -4,24 +4,24 @@ import axios from 'axios';
 const Footer = memo((props) => {
     const { listTodos, numOfTodoLeft, numOfTodoCompleted, setStatusFilter, active, clearSelectCompleted, removeAll } =
         props;
-    const [list, setlist] = useState(listTodos);
+    const [list, setlist] = useState([]);
     const onClearSelectCompleted = (e) => {
         e.preventDefault();
         clearSelectCompleted();
-    };
-    // console.log(id);
-    const onRemoveAll = (e) => {
-        // e.preventDefault();
-        removeAll();
         listTodos.map((item) => {
-            const id = item.id;
-            API.delete(`/${id}`).then((res) => {
-                // console.log(item.id);
-                listTodos.pop();
-            });
+            item.isCompleted = false;
+            API.put(`/${item.id}`, { ...item }).then((res) => {});
         });
     };
-
+    const onRemoveAll = () => {
+        removeAll();
+        listTodos.map((item) => {
+            API.delete(`/${item.id}`).then(() => {});
+        });
+        // while (listTodos.length >= 1) {
+        // console.log(listTodos.shift());
+        // setlist(listTodos)
+    };
     return (
         <footer className="footer">
             <span className="todo_count">

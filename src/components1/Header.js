@@ -6,9 +6,10 @@ const Header = memo((props) => {
     const onAddTodo = (e) => {
         if (e.key === 'Enter' && text) {
             e.preventDefault();
+
             API.post('', { text })
                 .then((res) => {
-                    const todo = { id: res.data.id, text: res.data.text, isCompleted: res.data.isCompleted };
+                    const todo = { ...res.data };
                     addTodo(todo);
                     setText('');
                 })
