@@ -16,6 +16,13 @@ const Header = memo((props) => {
                 .catch((error) => console.log(error));
         }
     };
+    const onCheckAll = () => {
+        checkAll();
+        listTodos.map((item) => {
+            item.isCompleted = true;
+            API.put(`/${item.id}`, { ...item }).then((res) => {});
+        });
+    };
     return (
         <header className="header">
             <h2>todoList</h2>
@@ -26,7 +33,7 @@ const Header = memo((props) => {
                         <i class="fas fa-chevron-right"></i>
                     </button>
                 ) : (
-                    <button onClick={checkAll}>
+                    <button onClick={onCheckAll}>
                         <i class="fas fa-chevron-down"></i>
                     </button>
                 )}
