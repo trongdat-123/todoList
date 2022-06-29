@@ -1,11 +1,17 @@
+body {
+    overflow: hidden;
+}
 #root {
     width: 500px;
     /* height: 160px;    */
     background: #fff;
-    margin: 130px auto;
+    margin: 150px auto;
+    /* padding: 200px; */
     position: relative;
     box-shadow: 0 2px 4px 0 rgba(0, 0, 0, 0.2), 0 25px 50px 0 rgba(0, 0, 0, 0.1);
     font-family: 'Montserrat Alternates', sans-serif;
+    /* overflow: visible; */
+    /* overflow-y: hidden; */
 }
 
 .todoapp h2 {
@@ -23,7 +29,7 @@
 .header_content {
     position: relative;
 }
-.header_content button {
+.header_content .checkAll {
     position: absolute;
     background: none;
     border: none;
@@ -33,7 +39,36 @@
     color: rgb(221, 216, 216);
     z-index: 100;
 }
+.header_content .action {
+    position: absolute;
 
+    top: 0;
+    right: -25px;
+
+    z-index: 100;
+}
+/* .header_content .action:hover .header_content .handle_action {
+    visibility: visible;
+} */
+.header_content .handle_action {
+    position: absolute;
+
+    top: 50px;
+    right: 2px;
+    font-size: 16px;
+    padding: 7px 0 0 17px;
+    width: 130px;
+    height: 40px;
+    border-radius: 7px;
+    background-color: rgb(241, 241, 241);
+    /* box-shadow: inset 2px -2px 1px rgb(0 0 0 / 3%); */
+    z-index: 100;
+    /* visibility: hidden; */
+}
+.handle_action a {
+    color: black;
+    text-decoration: none;
+}
 .list_todo {
     list-style: none;
     padding: 0;
@@ -63,7 +98,7 @@
     border: 0;
     color: inherit;
     padding: 6px 6px 6px 45px;
-    /* border: 1px solid #999; */
+    list-style: none;
     border-bottom: 1px solid #ededed;
     box-sizing: border-box;
     -webkit-font-smoothing: antialiased;
@@ -100,11 +135,13 @@ li.completed {
     color: #c5c5c5;
     text-decoration: line-through;
 }
-.but_remove {
+.but_remove,
+.but_restore {
     float: right;
     visibility: hidden;
 }
-.todo_item:hover .but_remove {
+.todo_item:hover .but_remove,
+.todo_item:hover .but_restore {
     visibility: visible;
 }
 
@@ -201,7 +238,10 @@ li.completed {
 .update_todo .active {
     color: rgb(247, 54, 54);
 }
-
+.updateText {
+    box-shadow: none;
+    border: none;
+}
 .handleUpdate button {
     width: 100px;
     background: none;
@@ -221,4 +261,44 @@ li.completed {
 .handleUpdate button a {
     color: #777;
     text-decoration: none;
+}
+
+/**/
+.recycle {
+    position: relative;
+}
+.recycle::before {
+    content: '';
+    position: absolute;
+    right: 0;
+    bottom: 0;
+    left: 0;
+    height: 14px;
+    overflow: hidden;
+    box-shadow: 0 1px 1px rgba(0, 0, 0, 0.2), 0 8px 0 -3px #f6f6f6, 0 9px 1px -3px rgba(0, 0, 0, 0.2),
+        0 16px 0 -6px #f6f6f6, 0 17px 2px -6px rgba(0, 0, 0, 0.2);
+    z-index: 0;
+}
+
+.recycle a {
+    position: absolute;
+    top: -43px;
+    width: 100%;
+    padding: 5px 0 5px 10px;
+    color: inherit;
+    font-size: 20px;
+    text-decoration: none;
+    /* margin: 20px;
+    padding: 3px 7px; */
+    /* border: 1px solid transparent;  */
+    border: 1px solid #ededed;
+    /* border-radius: 3px; */
+}
+
+.recycle_footer {
+    height: 40px;
+    padding: 10px 15px;
+}
+.recycle_footer span {
+    float: right;
 }

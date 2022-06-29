@@ -1,22 +1,16 @@
 import { memo, useEffect, useState } from 'react';
 import API from '../api/api';
-import axios from 'axios';
 const Footer = memo((props) => {
-    const { listTodos, numOfTodoLeft, numOfTodoCompleted, setStatusFilter, active, clearSelectCompleted, removeAll } =
-        props;
+    const { listTodos, numOfTodoLeft, numOfTodoCompleted, setStatusFilter, active, removeItem } = props;
     const [list, setlist] = useState([]);
-    const onClearSelectCompleted = (e) => {
-        e.preventDefault();
-        clearSelectCompleted();
-        listTodos.map((item) => {
-            item.isCompleted = false;
-            API.put(`/${item.id}`, { ...item }).then((res) => {});
-        });
-    };
-    const onRemoveAll = () => {
-        removeAll();
-        listTodos.map((item) => {
-            API.delete(`/${item.id}`).then(() => {});
+
+    const onRemoveAll = async () => {
+        listTodos.map(async (item) => {
+            if (item.isCompleted === true) {
+                await API.delete(`/${item.id}`).then(() => {
+                    removeItem(item);
+                });
+            }
         });
         // while (listTodos.length >= 1) {
         // console.log(listTodos.shift());
@@ -68,15 +62,10 @@ const Footer = memo((props) => {
                         Completed
                     </a>
                 </li>
-                <li>
-                    <a className="handle" onClick={onClearSelectCompleted}>
-                        <i class="fas fa-sync-alt"></i>
-                    </a>
-                </li>
 
                 <li>
                     <a className="handle" onClick={() => onRemoveAll()}>
-                        <i class="fas fa-trash-alt"></i>
+                        <i className="fas fa-trash-alt"></i>
                     </a>
                 </li>
             </ul>

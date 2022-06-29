@@ -1,4 +1,3 @@
-import './css/todo1.css';
 import { Component } from 'react';
 import API from './api/api';
 import Header from './components1/Header';
@@ -8,9 +7,9 @@ import TodoList from './components1/TodoList';
 const filterByStatus = (listTodos = [], status = '', id) => {
     switch (status) {
         case 'Active':
-            return listTodos.filter((item) => !item.isCompleted);
+            return listTodos.filter((item) => !item.isCompleted && !item.isDeleted);
         case 'Completed':
-            return listTodos.filter((item) => item.isCompleted);
+            return listTodos.filter((item) => item.isCompleted && !item.isDeleted);
         case 'Remove':
             return listTodos.filter((item) => item.id !== id);
         default:
@@ -18,7 +17,7 @@ const filterByStatus = (listTodos = [], status = '', id) => {
     }
 };
 const filterTodosLeft = (listTodos = []) => {
-    return listTodos.filter((item) => !item.isCompleted);
+    return listTodos.filter((item) => !item.isCompleted && !item.isDeleted);
 };
 class Main extends Component {
     state = {
@@ -27,13 +26,10 @@ class Main extends Component {
         status: 'All',
     };
     componentDidMount() {
-        const { listTodos } = this.state;
-
         API.get('')
             .then((res) => {
                 const listTodos = res.data;
                 this.setState({ listTodos });
-                console.log(listTodos);
             })
             .catch((error) => console.log(error));
     }
@@ -43,11 +39,43 @@ class Main extends Component {
         }));
     };
     removeTodo = (id = '') => {
+        // this.setState((prevTodos) => ({
+        //     listTodos: filterByStatus(prevTodos.listTodos, 'Remove', id),
+        // }));
+
+        const { listTodos } = this.state;
+
+        const updatedListTodos = listTodos.map((item) => {
+            if (item.id === id) {
+                return { ...item, isDeleted: !item.isDeleted };
+            } else {
+                return item;
+            }
+        });
+        this.setState({
+            listTodos: updatedListTodos,
+        });
+        console.log(listTodos);
+    };
+    restoreTodo = (id = '') => {
+        const { listTodos } = this.state;
+
+        const updatedListTodos = listTodos.map((item) => {
+            if (item.id === id) {
+                return { ...item, isDeleted: false };
+            } else {
+                return item;
+            }
+        });
+        this.setState({
+            listTodos: updatedListTodos,
+        });
+    };
+    removeTodoTrue = (id = '') => {
         this.setState((prevTodos) => ({
             listTodos: filterByStatus(prevTodos.listTodos, 'Remove', id),
         }));
     };
-
     changeStatus = (id = '') => {
         const { listTodos } = this.state;
 
@@ -90,23 +118,31 @@ class Main extends Component {
             listTodos: updatedListTodos,
         });
     };
-    removeAll = () => {
+    removeItem = (item = {}) => {
         // this.state.listTodos.map((item) => {
         // API.delete(`${listTodos[1].id}`).then(() => {});
         // const { listTodos } = this.state;
         // });
-
-        this.setState({
-            listTodos: [],
-        });
+        // const { listTodos } = this.state;
+        this.setState((prevTodos) => ({
+            listTodos: filterByStatus(prevTodos.listTodos, 'Remove', item.id),
+        }));
         // console.log(list);
     };
     render() {
-        const { listTodos, isCheckedAll, status } = this.state;
+        const { listTodos, status } = this.state;
 
         return (
             <div className="todoapp">
-                <Header addTodo={this.addTodos} listTodos={listTodos} checkAll={this.checkAll} />
+                <Header
+                    addTodo={this.addTodos}
+                    listTodos={listTodos}
+                    checkAll={this.checkAll}
+                    active={status}
+                    clearSelectCompleted={this.clearSelectCompleted}
+                    restoreTodo={this.restoreTodo}
+                    removeTodoTrue={this.removeTodoTrue}
+                />
                 <TodoList
                     listTodos={filterByStatus(listTodos, status)}
                     removeTodo={this.removeTodo}
@@ -120,8 +156,7 @@ class Main extends Component {
                     setStatusFilter={(status) => {
                         this.setState({ status });
                     }}
-                    clearSelectCompleted={this.clearSelectCompleted}
-                    removeAll={this.removeAll}
+                    removeItem={this.removeItem}
                 />
             </div>
         );

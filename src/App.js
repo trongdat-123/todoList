@@ -1,14 +1,15 @@
-import { Component } from 'react';
-import { Routes, Route, Outlet } from 'react-router-dom';
+import { Routes, Route } from 'react-router-dom';
 import Main from './Main';
-import TodoCard from './components1/TodoCard';
+import Recycle from './components1/Recycle';
+import './css/todo1.css';
+
 import 'antd/dist/antd.css';
 
 function App() {
     return (
         <Routes>
             <Route exact path="/" element={<Main />} />
-            <Route path="/todo/:id" element={<TodoCard />} />
+            <Route path="/bin" element={<Recycle />} />
         </Routes>
     );
 }

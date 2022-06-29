@@ -1,8 +1,5 @@
-import { memo, useEffect, useState } from 'react';
-import { BrowserRouter as Router, Switch, Route } from 'react-router-dom';
+import { memo } from 'react';
 
-import API from '../api/api';
-import App from '../App';
 import Todo from './Todo';
 const TodoList = memo((props) => {
     const { listTodos } = props;
@@ -37,9 +34,11 @@ const TodoList = memo((props) => {
     return (
         <div className="todoList">
             <ul className="list_todo">
-                {listTodos.map((todo, index) => (
-                    <Todo todo={todo} key={index} {...props} />
-                ))}
+                {listTodos
+                    .filter((item) => !item.isDeleted)
+                    .map((todo, index) => (
+                        <Todo todo={todo} key={index} {...props} />
+                    ))}
             </ul>
         </div>
     );
