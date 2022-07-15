@@ -1,20 +1,22 @@
 import { memo, useEffect, useState } from 'react';
-import API from '../api/api';
-const Footer = memo((props) => {
-    const { listTodos, numOfTodoLeft, numOfTodoCompleted, setStatusFilter, active, removeItem } = props;
-    const [list, setlist] = useState([]);
+import { getDatabase, ref, push, set, update } from 'firebase/database';
+import database from '../../../api/firebase';
 
-    const onRemoveAll = async () => {
-        listTodos.map(async (item) => {
+const Footer = memo((props) => {
+    const { id, listTodos, numOfTodoLeft, numOfTodoCompleted, setStatusFilter, active, removeManyTodo } = props;
+    const [list, setlist] = useState([]);
+    const db = database;
+
+    const onRemoveAll = () => {
+        listTodos.map((item) => {
             if (item.isCompleted === true) {
-                await API.delete(`/${item.id}`).then(() => {
-                    removeItem(item);
+                const postListRef = ref(db, 'users/' + id + '/todo/' + item.id);
+
+                update(postListRef, { isDeleted: true }).then(() => {
+                    removeManyTodo();
                 });
             }
         });
-        // while (listTodos.length >= 1) {
-        // console.log(listTodos.shift());
-        // setlist(listTodos)
     };
     return (
         <footer className="footer">
@@ -64,7 +66,7 @@ const Footer = memo((props) => {
                 </li>
 
                 <li>
-                    <a className="handle" onClick={() => onRemoveAll()}>
+                    <a className="handle" onClick={onRemoveAll}>
                         <i className="fas fa-trash-alt"></i>
                     </a>
                 </li>

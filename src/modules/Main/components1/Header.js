@@ -2,37 +2,54 @@ import { memo, useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { UnorderedListOutlined, DeleteOutlined } from '@ant-design/icons';
 import Menu from 'antd/lib/menu';
-import API from '../api/api';
+import { getDatabase, ref, push, set, update } from 'firebase/database';
+import database from '../../../api/firebase';
+
 const Header = memo((props) => {
     const [text, setText] = useState('');
     let navigate = useNavigate();
-    // const [isModalVisible, setIsModalVisible] = useState(false);
-
-    const { addTodo, listTodos, checkAll, clearSelectCompleted, active } = props;
+    const db = database;
+    const { id, addTodo, listTodos, checkAll, clearSelectCompleted, active } = props;
     const onAddTodo = (e) => {
         if (e.key === 'Enter' && text) {
             e.preventDefault();
 
-            API.post('', { text })
+            var idTodo = Math.floor(Math.random() * 101);
+            const postListRef = ref(db, 'users/' + id + '/todo/' + idTodo);
+            var newTodo = {
+                id: idTodo,
+                text: text,
+                isCompleted: false,
+                isDeleted: false,
+            };
+            set(postListRef, newTodo)
                 .then((res) => {
-                    const todo = { ...res.data };
-                    addTodo(todo);
+                    console.log(newTodo);
+                    addTodo(newTodo);
                     setText('');
                 })
                 .catch((error) => console.log(error));
         }
     };
     const onCheckAll = () => {
-        if (listTodos.length === listTodos.filter((item) => item.isCompleted).length) {
-            clearSelectCompleted();
-            listTodos.map((item) => {
-                API.put(`/${item.id}`, { isCompleted: false }).then((res) => {});
-            });
-        } else {
-            checkAll();
-            listTodos.map((item) => {
-                API.put(`/${item.id}`, { isCompleted: true }).then((res) => {});
-            });
+        if (active !== 'Completed') {
+            if (listTodos.length === listTodos.filter((item) => item.isCompleted).length) {
+                listTodos.map((item) => {
+                    const postListRef = ref(db, 'users/' + id + '/todo/' + item.id);
+
+                    update(postListRef, { isCompleted: false }).then(() => {
+                        clearSelectCompleted();
+                    });
+                });
+            } else {
+                listTodos.map((item) => {
+                    const postListRef = ref(db, 'users/' + id + '/todo/' + item.id);
+
+                    update(postListRef, { isCompleted: true }).then(() => {
+                        checkAll();
+                    });
+                });
+            }
         }
     };
 
@@ -48,7 +65,7 @@ const Header = memo((props) => {
 
     const items = [getItem('', 'sub4', <UnorderedListOutlined />, [getItem('Recycle Bin', '', <DeleteOutlined />)])];
     const onClick = (e) => {
-        navigate('/bin');
+        navigate(`/bin/${id}`);
     };
 
     return (
@@ -62,7 +79,7 @@ const Header = memo((props) => {
                         <i className="fas fa-chevron-right"></i>
                     </button>
                 ) : (
-                    <button className="checkAll" onClick={onCheckAll}>
+                    <button className="checkAll" onClick={() => onCheckAll()}>
                         <i className="fas fa-chevron-down"></i>
                     </button>
                 )}
@@ -78,7 +95,7 @@ const Header = memo((props) => {
                 />
                 <div className="action">
                     <Menu
-                        onClick={onClick}
+                        onClick={() => onClick()}
                         style={{
                             width: 70,
                             background: 'none',

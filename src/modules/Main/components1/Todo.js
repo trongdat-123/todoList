@@ -1,24 +1,25 @@
 import { memo, useState } from 'react';
-import API from '../api/api';
 import { ExclamationCircleOutlined } from '@ant-design/icons';
 import { message, Modal } from 'antd';
 import { useNavigate } from 'react-router-dom';
+import { getDatabase, ref, push, set, update } from 'firebase/database';
+import database from '../../../api/firebase';
+
 const Todo = memo((props) => {
     const [text, setText] = useState('');
     const [isModalVisible, setIsModalVisible] = useState(false);
     let navigate = useNavigate();
-
-    const { todo, removeTodo, changeStatus } = props;
+    const db = database;
+    const { id, todo, removeTodo, changeStatus } = props;
+    const postListRef = ref(db, 'users/' + id + '/todo/' + todo.id);
     const onChangeStatus = (e) => {
         e.preventDefault();
-        changeStatus(todo.id);
-        API.put(`/${todo.id}`, { isCompleted: !todo.isCompleted }).then((res) => {});
+
+        update(postListRef, { isCompleted: !todo.isCompleted }).then(() => {
+            changeStatus(todo.id);
+        });
     };
-    // const onRemoveTodo = (e) => {
-    //     e.preventDefault();
-    //     removeTodo(todo.id);
-    //     API.put(`/${todo.id}`, { isDeleted: false }).then((res) => {});
-    // };
+
     const { confirm } = Modal;
     const showConfirm = (e) => {
         e.preventDefault();
@@ -26,7 +27,7 @@ const Todo = memo((props) => {
             title: 'Do you want to delete this item?',
             icon: <ExclamationCircleOutlined />,
             onOk() {
-                API.put(`/${todo.id}`, { isDeleted: true }).then((res) => {
+                update(postListRef, { isDeleted: true }).then(() => {
                     removeTodo(todo.id);
                 });
             },
@@ -42,11 +43,11 @@ const Todo = memo((props) => {
 
     const handleOk = () => {
         if (text) {
-            API.put(`${todo.id}`, { text: text }).then(() => {
+            update(postListRef, { text: text }).then(() => {
                 console.log(text);
                 setText(text);
                 setIsModalVisible(false);
-                navigate('/');
+                navigate(`/todoList/${id}`);
             });
         }
     };
