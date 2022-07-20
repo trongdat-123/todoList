@@ -9,24 +9,30 @@ const Recycle = memo(() => {
     const dbRef = ref(database);
     const navigate = useNavigate();
     const [listTodos, setListTodos] = useState([]);
-    const id = auth.currentUser.uid;
+    const id = auth.currentUser ? auth.currentUser.uid : null;
 
     const { confirm } = Modal;
     useEffect(() => {
-        get(child(dbRef, 'users/' + id + '/todo/'))
-            .then((snapshot) => {
-                if (snapshot.exists()) {
-                    const arr = Object.values(snapshot.val()).filter((item) => item.isDeleted);
+        if (id) {
+            get(child(dbRef, 'users/' + id + '/todo/'))
+                .then((snapshot) => {
+                    if (snapshot.exists()) {
+                        const arr = Object.values(snapshot.val()).filter((item) => item.isDeleted);
 
-                    setListTodos(arr);
-                    // console.log(listTodos);
-                } else {
-                    console.log('No data available');
-                }
-            })
-            .catch((error) => {
-                console.error(error);
-            });
+                        setListTodos(arr);
+                        // console.log(listTodos);
+                    } else {
+                        console.log('No data available');
+                    }
+                })
+                .catch((error) => {
+                    console.error(error);
+                });
+        } else {
+            navigate('/');
+            console.log('Bạn chưa đăng nhập ');
+            // return null;
+        }
     }, []);
 
     const onRemoveTodoTrue = (idTodo) => {

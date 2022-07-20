@@ -4,7 +4,7 @@ import API from '../../api/api';
 import Header from './components1/Header';
 import Footer from './components1/Footer';
 import TodoList from './components1/TodoList';
-import { getDatabase, ref, child, get } from 'firebase/database';
+import { ref, child, get } from 'firebase/database';
 import { auth, database } from '../../api/firebase';
 const filterByStatus = (listTodos = [], status = '', id) => {
     switch (status) {
