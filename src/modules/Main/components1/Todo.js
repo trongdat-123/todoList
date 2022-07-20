@@ -70,23 +70,7 @@ const Todo = memo((props) => {
                 </button>
                 <span onClick={() => handleClick()}>{text === '' ? todo.text : text}</span>
 
-                <button
-                    className="but_remove"
-                    onClick={() => {
-                        confirm({
-                            title: 'Do you want to delete this item?',
-                            icon: <ExclamationCircleOutlined />,
-                            onOk() {
-                                // update(todoListRef, { isDeleted: true }).then(() => {
-                                removeTodo(todo.id);
-                                // });
-                            },
-                            onCancel() {
-                                console.log('Cancel');
-                            },
-                        });
-                    }}
-                >
+                <button className="but_remove" onClick={showConfirm}>
                     <i className="fa fa-times-circle" aria-hidden="true" style={{ color: 'red' }}></i>
                 </button>
             </li>

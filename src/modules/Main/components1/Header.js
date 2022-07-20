@@ -18,7 +18,7 @@ const Header = memo((props) => {
             const todoListRef = ref(db, 'users/' + id + '/todo/' + uidd);
             var newTodo = {
                 id: uidd,
-                text: text,
+                text: text.trim(),
                 isCompleted: false,
                 isDeleted: false,
             };
@@ -86,7 +86,7 @@ const Header = memo((props) => {
                     value={active === 'Completed' ? '' : text}
                     disabled={active === 'Completed' ? true : false}
                     onChange={(e) => {
-                        setText(e.target.value.trim());
+                        setText(e.target.value);
                     }}
                     onKeyPress={onAddTodo}
                 />
