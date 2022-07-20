@@ -9,7 +9,7 @@ import 'antd/dist/antd.css';
 function App() {
     return (
         <Routes>
-            <Route exact path="/login" element={<Login />} />
+            <Route exact path="/" element={<Login />} />
             <Route path="/todoList/:id" element={<Main />} />
 
             <Route path="/bin/:id" element={<Recycle />} />

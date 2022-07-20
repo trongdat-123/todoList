@@ -1,11 +1,11 @@
 import { Component, useEffect, useState } from 'react';
-import { useParams } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 import API from '../../api/api';
 import Header from './components1/Header';
 import Footer from './components1/Footer';
 import TodoList from './components1/TodoList';
 import { getDatabase, ref, child, get } from 'firebase/database';
-import database from '../../api/firebase';
+import { auth, database } from '../../api/firebase';
 const filterByStatus = (listTodos = [], status = '', id) => {
     switch (status) {
         case 'Active':
@@ -24,32 +24,31 @@ const filterTodosLeft = (listTodos = []) => {
 
 function Main() {
     const dbRef = ref(database);
-
     const [listTodos, setListTodos] = useState([]);
     const [status, setStatus] = useState('All');
-
-    const { id } = useParams();
+    const navigate = useNavigate();
+    const id = auth.currentUser ? auth.currentUser.uid : null;
     useEffect(() => {
-        // API.get(`/${id}/todolists`)
-        //     .then((res) => {
-        //         const listTodos = res.data;
-        //         setListTodos(listTodos);
-        //     })
-        //     .catch((error) => console.log(error));
-        get(child(dbRef, `users/${id}/todo/`))
-            .then((snapshot) => {
-                if (snapshot.exists()) {
-                    const arr = Object.values(snapshot.val()).filter((item) => !item.isDeleted);
-                    console.log(arr);
-                    setListTodos(arr);
-                    // console.log(listTodos);
-                } else {
-                    console.log('No data available');
-                }
-            })
-            .catch((error) => {
-                console.error(error);
-            });
+        if (id) {
+            get(child(dbRef, `users/${id}/todo/`))
+                .then((snapshot) => {
+                    if (snapshot.exists()) {
+                        const arr = Object.values(snapshot.val()).filter((item) => !item.isDeleted);
+                        console.log(arr);
+                        setListTodos(arr);
+                        // console.log(listTodos);
+                    } else {
+                        console.log('No data available');
+                    }
+                })
+                .catch((error) => {
+                    console.error(error);
+                });
+        } else {
+            navigate('/');
+            console.log('Bạn chưa đăng nhập ');
+            // return null;
+        }
     }, []);
 
     const addTodos = (todo = {}) => {
@@ -57,13 +56,9 @@ function Main() {
         setListTodos([...listTodos, todo]);
     };
     const removeTodo = (id = '') => {
-        // this.setState((prevTodos) => ({
-        //     listTodos: filterByStatus(prevTodos.listTodos, 'Remove', id),
-        // }));
-
         const updatedListTodos = listTodos.map((item) => {
             if (item.id === id) {
-                return { ...item, isDeleted: !item.isDeleted };
+                return { ...item, isDeleted: true };
             } else {
                 return item;
             }

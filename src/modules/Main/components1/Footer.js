@@ -1,6 +1,6 @@
 import { memo, useEffect, useState } from 'react';
 import { getDatabase, ref, push, set, update } from 'firebase/database';
-import database from '../../../api/firebase';
+import { database } from '../../../api/firebase';
 
 const Footer = memo((props) => {
     const { id, listTodos, numOfTodoLeft, numOfTodoCompleted, setStatusFilter, active, removeManyTodo } = props;
@@ -10,9 +10,9 @@ const Footer = memo((props) => {
     const onRemoveAll = () => {
         listTodos.map((item) => {
             if (item.isCompleted === true) {
-                const postListRef = ref(db, 'users/' + id + '/todo/' + item.id);
+                const todoListRef = ref(db, 'users/' + id + '/todo/' + item.id);
 
-                update(postListRef, { isDeleted: true }).then(() => {
+                update(todoListRef, { isDeleted: true }).then(() => {
                     removeManyTodo();
                 });
             }

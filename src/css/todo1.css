@@ -42,10 +42,16 @@ body {
 .header_content .action {
     position: absolute;
 
-    top: 0;
-    right: -25px;
+    top: 2px;
+    right: 2px;
 
     z-index: 100;
+}
+.action .ant-menu-horizontal {
+    line-height: 44px;
+}
+.action ul .ant-menu-submenu {
+    padding: 0 10px 0 0 !important;
 }
 /* .header_content .action:hover .header_content .handle_action {
     visibility: visible;

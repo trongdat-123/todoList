@@ -1,15 +1,15 @@
 import { memo, useEffect, useState } from 'react';
-import { Link, useNavigate, useParams } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import { Modal } from 'antd';
 import { ExclamationCircleOutlined, RollbackOutlined } from '@ant-design/icons';
 import { getDatabase, ref, child, get, remove, push, set, update } from 'firebase/database';
-import database from '../../api/firebase';
+import { database, auth } from '../../api/firebase';
 const Recycle = memo(() => {
     const db = database;
     const dbRef = ref(database);
     const navigate = useNavigate();
     const [listTodos, setListTodos] = useState([]);
-    const { id } = useParams();
+    const id = auth.currentUser.uid;
 
     const { confirm } = Modal;
     useEffect(() => {
@@ -38,8 +38,8 @@ const Recycle = memo(() => {
             okType: 'danger',
             cancelText: 'No',
             onOk() {
-                const postListRef = ref(db, 'users/' + id + '/todo/' + idTodo);
-                remove(postListRef).then(() => {
+                const todoListRef = ref(db, 'users/' + id + '/todo/' + idTodo);
+                remove(todoListRef).then(() => {
                     const newListTodos = listTodos.filter((item) => item.id !== idTodo);
                     setListTodos(newListTodos);
                 });
@@ -51,8 +51,8 @@ const Recycle = memo(() => {
     };
 
     const onRestoreTodo = (idTodo) => {
-        const postListRef = ref(db, 'users/' + id + '/todo/' + idTodo);
-        update(postListRef, { isDeleted: false }).then(() => {
+        const todoListRef = ref(db, 'users/' + id + '/todo/' + idTodo);
+        update(todoListRef, { isDeleted: false }).then(() => {
             const newListTodos = listTodos.filter((item) => item.id !== idTodo);
             setListTodos(newListTodos);
         });

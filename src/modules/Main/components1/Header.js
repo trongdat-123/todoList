@@ -1,10 +1,11 @@
 import { memo, useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import { UnorderedListOutlined, DeleteOutlined } from '@ant-design/icons';
+import { UnorderedListOutlined, DeleteOutlined, LogoutOutlined } from '@ant-design/icons';
 import Menu from 'antd/lib/menu';
 import { getDatabase, ref, push, set, update } from 'firebase/database';
-import database from '../../../api/firebase';
-
+import { signOut, onAuthStateChanged } from 'firebase/auth';
+import { database, auth } from '../../../api/firebase';
+import { uid } from 'uid';
 const Header = memo((props) => {
     const [text, setText] = useState('');
     let navigate = useNavigate();
@@ -13,16 +14,15 @@ const Header = memo((props) => {
     const onAddTodo = (e) => {
         if (e.key === 'Enter' && text) {
             e.preventDefault();
-
-            var idTodo = Math.floor(Math.random() * 101);
-            const postListRef = ref(db, 'users/' + id + '/todo/' + idTodo);
+            const uidd = uid();
+            const todoListRef = ref(db, 'users/' + id + '/todo/' + uidd);
             var newTodo = {
-                id: idTodo,
+                id: uidd,
                 text: text,
                 isCompleted: false,
                 isDeleted: false,
             };
-            set(postListRef, newTodo)
+            set(todoListRef, newTodo)
                 .then((res) => {
                     console.log(newTodo);
                     addTodo(newTodo);
@@ -35,43 +35,40 @@ const Header = memo((props) => {
         if (active !== 'Completed') {
             if (listTodos.length === listTodos.filter((item) => item.isCompleted).length) {
                 listTodos.map((item) => {
-                    const postListRef = ref(db, 'users/' + id + '/todo/' + item.id);
+                    const todoListRef = ref(db, 'users/' + id + '/todo/' + item.id);
 
-                    update(postListRef, { isCompleted: false }).then(() => {
+                    update(todoListRef, { isCompleted: false }).then(() => {
                         clearSelectCompleted();
                     });
                 });
             } else {
                 listTodos.map((item) => {
-                    const postListRef = ref(db, 'users/' + id + '/todo/' + item.id);
+                    const todoListRef = ref(db, 'users/' + id + '/todo/' + item.id);
 
-                    update(postListRef, { isCompleted: true }).then(() => {
+                    update(todoListRef, { isCompleted: true }).then(() => {
                         checkAll();
                     });
                 });
             }
         }
     };
+    const handleSignOut = () => {
+        signOut(auth)
+            .then(() => {
+                navigate('/');
+            })
+            .catch((err) => {
+                alert(err.message);
+            });
+    };
 
-    function getItem(label, key, icon, children, type) {
-        return {
-            key,
-            icon,
-            children,
-            label,
-            type,
-        };
-    }
-
-    const items = [getItem('', 'sub4', <UnorderedListOutlined />, [getItem('Recycle Bin', '', <DeleteOutlined />)])];
-    const onClick = (e) => {
+    const onBin = (e) => {
         navigate(`/bin/${id}`);
     };
 
     return (
         <header className="header">
             <h2>todoList</h2>
-
             <div className="header_content">
                 {/* {console.log(active)}, */}
                 {listTodos.length === 0 ? (
@@ -89,20 +86,21 @@ const Header = memo((props) => {
                     value={active === 'Completed' ? '' : text}
                     disabled={active === 'Completed' ? true : false}
                     onChange={(e) => {
-                        setText(e.target.value);
+                        setText(e.target.value.trim());
                     }}
                     onKeyPress={onAddTodo}
                 />
                 <div className="action">
-                    <Menu
-                        onClick={() => onClick()}
-                        style={{
-                            width: 70,
-                            background: 'none',
-                        }}
-                        mode="horizontal"
-                        items={items}
-                    />
+                    <Menu mode="horizontal">
+                        <Menu.SubMenu key="SubMenu" title="" icon={<UnorderedListOutlined />}>
+                            <Menu.Item key="two" icon={<DeleteOutlined />} onClick={onBin}>
+                                Recycle Bin
+                            </Menu.Item>
+                            <Menu.Item key="three" icon={<LogoutOutlined />} onClick={handleSignOut}>
+                                Logout
+                            </Menu.Item>
+                        </Menu.SubMenu>
+                    </Menu>
                 </div>
             </div>
         </header>

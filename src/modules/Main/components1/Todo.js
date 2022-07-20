@@ -3,7 +3,7 @@ import { ExclamationCircleOutlined } from '@ant-design/icons';
 import { message, Modal } from 'antd';
 import { useNavigate } from 'react-router-dom';
 import { getDatabase, ref, push, set, update } from 'firebase/database';
-import database from '../../../api/firebase';
+import { database } from '../../../api/firebase';
 
 const Todo = memo((props) => {
     const [text, setText] = useState('');
@@ -11,23 +11,22 @@ const Todo = memo((props) => {
     let navigate = useNavigate();
     const db = database;
     const { id, todo, removeTodo, changeStatus } = props;
-    const postListRef = ref(db, 'users/' + id + '/todo/' + todo.id);
+    const todoListRef = ref(db, 'users/' + id + '/todo/' + todo.id);
     const onChangeStatus = (e) => {
         e.preventDefault();
 
-        update(postListRef, { isCompleted: !todo.isCompleted }).then(() => {
+        update(todoListRef, { isCompleted: !todo.isCompleted }).then(() => {
             changeStatus(todo.id);
         });
     };
 
     const { confirm } = Modal;
-    const showConfirm = (e) => {
-        e.preventDefault();
+    const showConfirm = () => {
         confirm({
             title: 'Do you want to delete this item?',
             icon: <ExclamationCircleOutlined />,
             onOk() {
-                update(postListRef, { isDeleted: true }).then(() => {
+                update(todoListRef, { isDeleted: true }).then(() => {
                     removeTodo(todo.id);
                 });
             },
@@ -43,7 +42,7 @@ const Todo = memo((props) => {
 
     const handleOk = () => {
         if (text) {
-            update(postListRef, { text: text }).then(() => {
+            update(todoListRef, { text: text }).then(() => {
                 console.log(text);
                 setText(text);
                 setIsModalVisible(false);
@@ -71,7 +70,23 @@ const Todo = memo((props) => {
                 </button>
                 <span onClick={() => handleClick()}>{text === '' ? todo.text : text}</span>
 
-                <button className="but_remove" onClick={showConfirm}>
+                <button
+                    className="but_remove"
+                    onClick={() => {
+                        confirm({
+                            title: 'Do you want to delete this item?',
+                            icon: <ExclamationCircleOutlined />,
+                            onOk() {
+                                // update(todoListRef, { isDeleted: true }).then(() => {
+                                removeTodo(todo.id);
+                                // });
+                            },
+                            onCancel() {
+                                console.log('Cancel');
+                            },
+                        });
+                    }}
+                >
                     <i className="fa fa-times-circle" aria-hidden="true" style={{ color: 'red' }}></i>
                 </button>
             </li>

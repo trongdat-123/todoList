@@ -1,31 +1,32 @@
 import { Button, Checkbox, Form, Input } from 'antd';
 import { memo, useEffect, useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
+import { signInWithEmailAndPassword, onAuthStateChanged, createUserWithEmailAndPassword } from 'firebase/auth';
+import { database, auth } from '../../api/firebase';
 
 import '../../css/login.css';
-import API from '../../api/api';
 const Login = memo(() => {
     let navigate = useNavigate();
-    const [username, setUsername] = useState('');
+
+    const [email, setEmail] = useState('');
 
     const [password, setPassword] = useState('');
 
-    const [listUsers, setListUsers] = useState([]);
-
     useEffect(() => {
-        API.get('')
-            .then((res) => {
-                const listUsers = res.data;
-                setListUsers(listUsers);
-            })
-            .catch((error) => console.log(error));
+        auth.onAuthStateChanged((user) => {
+            if (user) {
+                navigate(`/todolist/${auth.currentUser.uid}`);
+            }
+        });
     }, []);
-
     const [form] = Form.useForm();
     const submit = () => {
-        const user = listUsers.find((item) => item.username === username && item.password === password);
-        if (user) {
-            navigate(`/todolist/${user.id}`);
+        if (email && password) {
+            signInWithEmailAndPassword(auth, email, password)
+                .then(() => {
+                    navigate(`/todolist/${auth.currentUser.uid}`);
+                })
+                .catch((err) => alert(err.message));
         }
     };
     const onFinish = (values) => {
@@ -58,16 +59,16 @@ const Login = memo(() => {
                 autoComplete="off"
             >
                 <Form.Item
-                    label="Username"
-                    name="username"
+                    label="Email"
+                    name="email"
                     rules={[
                         {
                             required: true,
-                            message: 'Please input your username!',
+                            message: 'Please input your email!',
                         },
                     ]}
                 >
-                    <Input onChange={(e) => setUsername(e.target.value)} />
+                    <Input onChange={(e) => setEmail(e.target.value.trim())} />
                 </Form.Item>
 
                 <Form.Item
@@ -80,7 +81,7 @@ const Login = memo(() => {
                         },
                     ]}
                 >
-                    <Input.Password onChange={(e) => setPassword(e.target.value)} />
+                    <Input.Password onChange={(e) => setPassword(e.target.value.trim())} />
                 </Form.Item>
 
                 <Form.Item
@@ -100,10 +101,10 @@ const Login = memo(() => {
                         span: 16,
                     }}
                 >
-                    <Button type="primary" htmlType="submit" onClick={() => submit()}>
+                    <Button type="primary" htmlType="submit" onClick={submit}>
                         Submit
                     </Button>
-                    <Button htmlType="button" onClick={() => onReset()}>
+                    <Button htmlType="button" onClick={onReset}>
                         Reset
                     </Button>
                 </Form.Item>
